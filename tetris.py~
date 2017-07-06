@@ -5,8 +5,7 @@
 
 from graphics import *
 
-win = GraphWin("WTP Tetris", 300, 300)
-
+# creates a single block using the rectangle class in graphics
 class Block(Rectangle):
 	def __init__(self, coords, color):
 		self.point1 = Point(coords[0]*30, coords[1]*30)
@@ -14,81 +13,81 @@ class Block(Rectangle):
 		Rectangle.__init__(self, self.point1, self.point2)
 		Rectangle.setFill(self, color)
 		Rectangle.setWidth(self, 3)
-def i_block(coords):
-	center_block = Block(coords,"blue")
-	block_1_coords = [coords[0]-1, coords[1]]
-	block_1 = Block(block_1_coords, "blue")
-	block_2_coords = [coords[0]+1, coords[1]]
-	block_2 = Block(block_2_coords, "blue")
-	block_3_coords = [coords[0]+2, coords[1]]
-	block_3 = Block(block_3_coords, "blue")
-	return [block_1, center_block, block_2, block_3]
 
-def j_block(coords):
-	center_block = Block(coords,"orange")
-	block_1_coords = [coords[0]-1, coords[1]]
-	block_1 = Block(block_1_coords, "orange")
-	block_2_coords = [coords[0]+1, coords[1]]
-	block_2 = Block(block_2_coords, "orange")
-	block_3_coords = [coords[0]+1, coords[1]+1]
-	block_3 = Block(block_3_coords, "orange")
-	return [block_1, center_block, block_2, block_3]
+# creates multiple blocks depending on the list of coordinates
+# method draws each block to form the final shape
+class Shape():
+	def __init__(self, coords, color):
+		self.list_of_blocks = []
+		for x in coords:
+			block = Block(x, color)
+			self.list_of_blocks.append(block)
 
-def l_block(coords):
-	center_block = Block(coords,"cyan")
-	block_1_coords = [coords[0]-1, coords[1]]
-	block_1 = Block(block_1_coords, "cyan")
-	block_2_coords = [coords[0]+1, coords[1]]
-	block_2 = Block(block_2_coords, "cyan")
-	block_3_coords = [coords[0]-1, coords[1]+1]
-	block_3 = Block(block_3_coords, "cyan")
-	return [block_1, center_block, block_2, block_3]
+	def draw(self, win):
+		for x in self.list_of_blocks:
+			x.draw(win)
 
-def o_block(coords):
-	center_block = Block(coords,"red")
-	block_1_coords = [coords[0]-1, coords[1]]
-	block_1 = Block(block_1_coords, "red")
-	block_2_coords = [coords[0], coords[1]+1]
-	block_2 = Block(block_2_coords, "red")
-	block_3_coords = [coords[0]-1, coords[1]+1]
-	block_3 = Block(block_3_coords, "red")
-	return [block_1, center_block, block_2, block_3]
+# defines the list of coordinates and the color for each shape
 
-def s_block(coords):
-	center_block = Block(coords,"green2")
-	block_1_coords = [coords[0]+1, coords[1]]
-	block_1 = Block(block_1_coords, "green2")
-	block_2_coords = [coords[0], coords[1]+1]
-	block_2 = Block(block_2_coords, "green2")
-	block_3_coords = [coords[0]-1, coords[1]+1]
-	block_3 = Block(block_3_coords, "green2")
-	return [block_1, center_block, block_2, block_3]
+class I_shape(Shape):
+	def __init__(self, center_coords):
+		
+		block_1_coords = [center_coords[0]-1, center_coords[1]]
+		block_2_coords = [center_coords[0]+1, center_coords[1]]
+		block_3_coords = [center_coords[0]+2, center_coords[1]]
+		list_of_coords = [block_1_coords, center_coords, block_2_coords, block_3_coords]
+		Shape.__init__(self, list_of_coords, "blue")
 
-def t_block(coords):
-	center_block = Block(coords,"yellow")
-	block_1_coords = [coords[0]+1, coords[1]]
-	block_1 = Block(block_1_coords, "yellow")
-	block_2_coords = [coords[0], coords[1]+1]
-	block_2 = Block(block_2_coords, "yellow")
-	block_3_coords = [coords[0]-1, coords[1]]
-	block_3 = Block(block_3_coords, "yellow")
-	return [block_1, center_block, block_2, block_3]
+class J_shape(Shape):
+	def __init__(self, center_coords):
+		block_1_coords = [center_coords[0]-1, center_coords[1]]
+		block_2_coords = [center_coords[0]+1, center_coords[1]]
+		block_3_coords = [center_coords[0]+1, center_coords[1]+1]
+		list_of_coords = [block_1_coords, center_coords, block_2_coords, block_3_coords]
+		Shape.__init__(self, list_of_coords, "orange")
 
-def z_block(coords):
-	center_block = Block(coords,"pink")
-	block_1_coords = [coords[0]+1, coords[1]+1]
-	block_1 = Block(block_1_coords, "pink")
-	block_2_coords = [coords[0], coords[1]+1]
-	block_2 = Block(block_2_coords, "pink")
-	block_3_coords = [coords[0]-1, coords[1]]
-	block_3 = Block(block_3_coords, "pink")
-	return [block_1, center_block, block_2, block_3]
+class L_shape(Shape):
+	def __init__(self, center_coords):
+		block_1_coords = [center_coords[0]-1, center_coords[1]]
+		block_2_coords = [center_coords[0]+1, center_coords[1]]
+		block_3_coords = [center_coords[0]-1, center_coords[1]+1]
+		list_of_coords = [block_1_coords, center_coords, block_2_coords, block_3_coords]
+		Shape.__init__(self, list_of_coords, "cyan")
+
+
+class O_shape(Shape):
+	def __init__(self, center_coords):
+		block_1_coords = [center_coords[0]-1, center_coords[1]]
+		block_2_coords = [center_coords[0], center_coords[1]+1]
+		block_3_coords = [center_coords[0]-1, center_coords[1]+1]
+		list_of_coords = [block_1_coords, center_coords, block_2_coords, block_3_coords]
+		Shape.__init__(self, list_of_coords, "red")
+
+class S_shape(Shape):
+	def __init__(self, center_coords):
+		block_1_coords = [center_coords[0]+1, center_coords[1]]
+		block_2_coords = [center_coords[0], center_coords[1]+1]
+		block_3_coords = [center_coords[0]-1, center_coords[1]+1]
+		list_of_coords = [block_1_coords, center_coords, block_2_coords, block_3_coords]
+		Shape.__init__(self, list_of_coords, "green2")
+
+class T_shape(Shape):
+	def __init__(self, center_coords):
+		block_1_coords = [center_coords[0]+1, center_coords[1]]
+		block_2_coords = [center_coords[0], center_coords[1]+1]
+		block_3_coords = [center_coords[0]-1, center_coords[1]]
+		list_of_coords = [block_1_coords, center_coords, block_2_coords, block_3_coords]
+		Shape.__init__(self, list_of_coords, "yellow")
+
+class Z_shape(Shape):
+	def __init__(self, center_coords):
+		block_1_coords = [center_coords[0]+1, center_coords[1]+1]
+		block_2_coords = [center_coords[0], center_coords[1]+1]
+		block_3_coords = [center_coords[0]-1, center_coords[1]]
+		list_of_coords = [block_1_coords, center_coords, block_2_coords, block_3_coords]
+		Shape.__init__(self, list_of_coords, "magenta")
 	
 
-block = z_block([2,3])
-for x in block:
-	x.draw(win)
 
-win.getMouse()
 
 
