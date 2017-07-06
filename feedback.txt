@@ -1,0 +1,9 @@
+# moving.py
+Great work getting the output on the first guess; make sure you show your work and explain your reasoning though!
+
+
+# tetris.py day 1
+Looks great! Good job with the bonus and writing your own small test for it. 
+
+
+
