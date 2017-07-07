@@ -4,7 +4,52 @@
 # plays a game of tetris
 
 from graphics import *
+import time
 
+#keeps track of variables for the game
+class Game():
+	def __init__(self, col, row):
+		self.column = col
+		self.row = row
+		self.window = GraphWin("Tetris", col*30, row*30)
+		self.current_shape = ""
+
+
+	def get_window(self):
+		x = self.column*30
+		y = self.row*30
+		return x,y
+	
+	def add_drop_shape(self,shape_letter):
+		if shape_letter == "I":
+			self.current_shape = I_shape([int(self.column/2),-1])
+			self.current_shape.draw(self.window)
+		elif shape_letter == "J":
+			self.current_shape = J_shape([int(self.column/2),-1])
+			self.current_shape.draw(self.window)
+		elif shape_letter == "L":
+			self.current_shape = L_shape([int(self.column/2),-1])
+			self.current_shape.draw(self.window)
+		elif shape_letter == "O":
+			self.current_shape = O_shape([int(self.column/2),-1])
+			self.current_shape.draw(self.window)
+		elif shape_letter == "S":
+			self.current_shape = S_shape([int(self.column/2),-1])
+			self.current_shape.draw(self.window)
+		elif shape_letter == "T":
+			self.current_shape = T_shape([int(self.column/2),-1])
+			self.current_shape.draw(self.window)
+		elif shape_letter == "Z":
+			self.current_shape = Z_shape([int(self.column/2),-1])
+			self.current_shape.draw(self.window)
+		while self.current_shape.can_move(0,1) == True:
+			self.current_shape.move(0,1)
+			time.sleep(.25)
+		
+
+				
+game = Game(12,20)
+		
 # creates a single block using the rectangle class in graphics
 class Block(Rectangle):
 	def __init__(self, coords, color):
@@ -13,6 +58,24 @@ class Block(Rectangle):
 		Rectangle.__init__(self, self.point1, self.point2)
 		Rectangle.setFill(self, color)
 		Rectangle.setWidth(self, 3)
+		
+	
+	def can_move(self,dx, dy):
+		win_x, win_y = game.get_window()
+		bottom_right = Rectangle.getP2(self)
+		right_x = bottom_right.getX()
+		lowest_y = bottom_right.getY()
+		if lowest_y + dy*30 > win_y:
+			can_move = False
+		elif dx != 0:
+			if dx > 0 and right_x + dx*30 > win_x:
+				can_move = False
+			if dx < 0 and (right_x-30) - dx*30 < 0:
+				can_move = False
+		else:
+			can_move = True
+		return can_move
+
 
 # creates multiple blocks depending on the list of coordinates
 # method draws each block to form the final shape
@@ -26,6 +89,20 @@ class Shape():
 	def draw(self, win):
 		for x in self.list_of_blocks:
 			x.draw(win)
+
+#moves the shape by dx and dy which are coordinates
+	def move(self,dx,dy):
+		for block in self.list_of_blocks:
+			block.move(dx*30, dy*30)
+
+#uses the move method in block to see if the shape can move
+	def can_move(self,dx,dy):
+		can_move = True
+		for block in self.list_of_blocks:
+			if block.can_move(dx,dy) == False:
+				can_move = False
+		return can_move
+
 
 # defines the list of coordinates and the color for each shape
 
@@ -88,6 +165,5 @@ class Z_shape(Shape):
 		Shape.__init__(self, list_of_coords, "magenta")
 	
 
-
-
-
+"""shape = T_shape([3,5])
+print(shape.can_move(-3,5))"""
