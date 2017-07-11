@@ -6,4 +6,6 @@ Great work getting the output on the first guess; make sure you show your work a
 Looks great! Good job with the bonus and writing your own small test for it. 
 
 
-
+# tetris,py day 4
+Looks great!  Make sure to put your tests at the end of the code (game = Game(10,20) should be at the end along with drop_shapes()).  Also, drop_shapes() assumes that your Game instance is called 'game', which may not always be true.
+For the assignment, it's ok to leave it as is since you're the only one making a Game and you call it game.
