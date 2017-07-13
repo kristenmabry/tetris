@@ -14,7 +14,10 @@ class Game():
 		self.row = row
 		self.window = GraphWin("Tetris", col*30, row*30)
 		self.current_shape = ""
-		self.block_locations = [self.row]*self.column
+		self.tops = [self.row]*self.column
+		self.key = None
+		self.window.bind_all('<Key>', self.key_pressed)
+		self.all_blocks = []
 
 # creates a new shape and drops it until it can't move
 	def add_drop_shape(self,shape_letter):
@@ -41,27 +44,75 @@ class Game():
 			self.current_shape.draw(self.window)
 		while self.current_shape.can_move(0,1) == True:
 			self.current_shape.move(0,1)
-			time.sleep(.125)
+			self.handle_keypress()
+			time.sleep(.25)
 
 #replaces the block list with the location of each of the top blocks
 		for block in self.current_shape.list_of_blocks:
 			point = block.getP1()
 			y = point.getY()
 			x = point.getX()
-			if y/30 < self.block_locations[int(x/30)]:
-				self.block_locations[int(x/30)] = int(y/30)
+			self.all_blocks.append(block)
+			if y/30 < self.tops[int(x/30)]:
+				self.tops[int(x/30)] = int(y/30)
+		print(self.tops)
 			
 	
 # creates a random shape and saves it as an instance variable
 	def random_shape(self):
 		self.current_shape = random.randint(0, 6)
 		return self.current_shape
+
+	def key_pressed(self, event):
+		self.key = event.keysym
+	
+	def handle_keypress(self):
+		if self.key == "Right":
+			if self.current_shape.can_move(1,0):
+				self.current_shape.move(1,0)
+		elif self.key == "Left":
+			if self.current_shape.can_move(-1,0):
+				self.current_shape.move(-1,0)
+		elif self.key == "Down":
+			if self.current_shape.can_move(0,1):
+				self.current_shape.move(0,1)
+		self.key = None
+
+	def delete_row(self):
+		for row in range(self.row):
+			blocks_in_row = []
+#adds all the blocks in the current row to the list
+			for block in self.all_blocks:
+				point = block.getP1()
+				upper_y = point.getY()
+				if upper_y/30 == row:
+					blocks_in_row.append(block)
+#checks if there are as many blocks in that row as there are columns and deletes those blocks
+			if len(blocks_in_row) == self.column:
+				for block in blocks_in_row:
+					block.undraw()
+					self.all_blocks.remove(block)
+#moves all the blocks above it down one row
+				for block in self.all_blocks:
+					point = block.getP1()
+					upper_y = point.getY()
+					if upper_y/30 < row:
+						block.move(0,30)
+#should decrease each top by one
+				print(self.tops)
+				for column in self.tops:	
+					column += 1
+				print(self.tops)
 				
-game = Game(10,20)
+					
+			
+				
+
 		
 # creates a single block using the rectangle class in graphics
 class Block(Rectangle):
 	def __init__(self, coords, color):
+		self.coordinates = coords
 		self.point1 = Point(coords[0]*30, coords[1]*30)
 		self.point2 = Point((coords[0]*30)+30, (coords[1]*30)+30)
 		Rectangle.__init__(self, self.point1, self.point2)
@@ -74,12 +125,17 @@ class Block(Rectangle):
 		bottom_right = Rectangle.getP2(self)
 		right_x = bottom_right.getX()
 		lowest_y = bottom_right.getY()
-		if (lowest_y/30)-1 + dy >= game.block_locations[int((right_x/30)-1)]:
+		can_move = True
+		if (lowest_y/30)-1 + dy >= game.tops[int((right_x/30)-1)]:
 			can_move = False
 		elif dx != 0:
-			if dx > 0 and right_x/30 + dx > win_x:
+			if dx > 0 and right_x/30 + dx > game.column:
 				can_move = False
-			if dx < 0 and (right_x-30)/30 - dx < 0:
+			elif dx > 0 and lowest_y/30 >= game.tops[int((right_x/30)-1+dx)]:
+				can_move = False
+			elif dx < 0 and (right_x-30)/30 - dx <= 1:
+				can_move = False
+			elif dx < 0 and lowest_y/30 >= game.tops[int((right_x/30)-1-dx)]:
 				can_move = False
 		else:
 			can_move = True
@@ -174,8 +230,12 @@ class Z_shape(Shape):
 		Shape.__init__(self, list_of_coords, "magenta")
 
 def drop_shapes() :
-	while 0 not in game.block_locations:
-		new_shape = game.random_shape()
+	while 0 not in game.tops and -1 not in game.tops:
+		new_shape = 0
 		game.add_drop_shape(new_shape)
+		game.delete_row()
 		time.sleep(1)
+
+game = Game(12,20)
 drop_shapes()
+
