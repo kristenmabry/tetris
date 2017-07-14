@@ -30,7 +30,6 @@ class Game():
 
 # creates a new shape and drops it until it can't move
 	def add_drop_shape(self):
-		self.shape_letter = self.next_shape
 		if self.shape_letter == 0:
 			self.current_shape = I_shape([int(self.column/2),-1])
 			self.current_shape.draw(self.window)
@@ -156,28 +155,33 @@ class Game():
 		self.score_display.setSize(16)
 		self.score_display.draw(self.window)
 
-	"""def preview(self):
+	def preview(self):
 		if self.next_shape == 0:
-			preview_shape = I_shape([int(self.column+3),8])
-			preview_shape.draw(self.window)
+			self.preview_shape = I_shape([int(self.column+3),7])
+			self.preview_shape.draw(self.window)
 		elif self.next_shape == 1:
-			preview_shape = J_shape([int(self.column+3),8])
-			preview_shape.draw(self.window)
+			self.preview_shape = J_shape([int(self.column+3),7])
+			self.preview_shape.draw(self.window)
 		elif self.next_shape == 2:
-			preview_shape = L_shape([int(self.column+3),8])
-			preview_shape.draw(self.window)
+			self.preview_shape = L_shape([int(self.column+3),7])
+			self.preview_shape.draw(self.window)
 		elif self.next_shape == 3:
-			preview_shape = O_shape([int(self.column+3),8])
-			preview_shape.draw(self.window)
+			self.preview_shape = O_shape([int(self.column+3),7])
+			self.preview_shape.draw(self.window)
 		elif self.next_shape == 4:
-			preview_shape = S_shape([int(self.column+3),8])
-			preview_shape.draw(self.window)
+			self.preview_shape = S_shape([int(self.column+3),7])
+			self.preview_shape.draw(self.window)
 		elif self.next_shape == 5:
-			preview_shape = T_shape([int(self.column+3),8])
-			preview_shape.draw(self.window)
+			self.preview_shape = T_shape([int(self.column+3),7])
+			self.preview_shape.draw(self.window)
 		elif self.next_shape == 6:
-			preview_shape = Z_shape([int(self.column+3),8])
-			preview_shape.draw(self.window)"""
+			self.preview_shape = Z_shape([int(self.column+3),7])
+			self.preview_shape.draw(self.window)
+
+	def create_next_shape(self):
+		self.shape_letter = self.next_shape
+		for block in self.preview_shape.list_of_blocks:
+			block.undraw()
 	
 
 		
@@ -651,19 +655,31 @@ class Z_shape(Shape):
 			self.rotate_position = 0
 
 def drop_shapes() :
-	while 0 not in game.tops and -1 not in game.tops:
+	at_the_top = False
+	while not at_the_top:
+		game.create_next_shape()
 		game.random_shape()
-		#game.preview()
+		game.preview()
 		game.add_drop_shape()
 		game.delete_row()
 		game.keep_score()
 		time.sleep(1)
+		for block in game.all_blocks:
+			if block.coordinates[1] == 0:
+				at_the_top = True
+	game_over = Text(Point(game.column*15, game.row*15), "Game Over!")
+	game_over.setSize(36)
+	game_over.setTextColor("green2")
+	game_over.setStyle("bold")
+	game_over.draw(game.window)
+	game.window.getMouse()
+	game.window.close()
 
 game = Game(12,30)
 game.create_window()
 game.add_floor()
-I = I_shape([4,4])
-print(I.list_of_blocks)
+game.random_shape()
+game.preview_shape = I_shape([20,20])
 drop_shapes()
 
 
