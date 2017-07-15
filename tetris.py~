@@ -88,6 +88,9 @@ class Game():
 		elif self.key == "Up":
 			if self.current_shape.can_rotate():
 				self.current_shape.rotate()
+		elif self.key == "space":
+			while self.current_shape.can_move(0,1):
+				self.current_shape.move(0,1)
 		elif self.key == "p":
 			pause_window = Rectangle(Point(self.column*6, self.row*6), Point(self.column*24, self.row*12))
 			pause_window.setFill("white")
